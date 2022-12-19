@@ -11,22 +11,24 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping("")
-    public User loginUser(@RequestBody String username, String password) {
-        return userRepository.loginUser(username, password);
+    @PostMapping("/login")
+    public String loginUser(@RequestBody String credentials) {
+        var username = credentials.split("&")[0].substring(9);
+        var password = credentials.split("&")[1].substring(9);
+        return userRepository.login(username, password);
     }
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public int addUser(@RequestBody User user) {
         return userRepository.addUser(user);
     }
 
-    @PostMapping("balance")
+    @PostMapping("/balance")
     public int updateBalance(@RequestBody User user, int amount) {
         return userRepository.updateBalance(user, amount);
     }
 
-    @DeleteMapping("delete")
+    @DeleteMapping("/delete")
     public int deleteUserById(@RequestBody int id) {
         return userRepository.deleteUserById(id);
     }
