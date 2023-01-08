@@ -50,6 +50,7 @@ public class UserRepository {
         var token = sha256(random.nextInt() + "hello java");
         try {
             var usr = getUserByData(username, password);
+            jdbcTemplate.update("DELETE FROM sessions WHERE user_id = ?", usr.getId());
             var res = jdbcTemplate.update("INSERT INTO sessions (token, user_id) VALUES (?, ?)", token, usr.getId());
             return res == 1 ? token : "";
         } catch (EmptyResultDataAccessException e) {
