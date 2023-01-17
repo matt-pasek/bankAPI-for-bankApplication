@@ -1,5 +1,7 @@
 package com.example.bankapplication.Controlers;
 
+import com.example.bankapplication.Models.BlikUsageData;
+import com.example.bankapplication.Models.TokenData;
 import com.example.bankapplication.Repositories.BlikRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +13,13 @@ public class BlikController {
     BlikRepository blikRepository;
 
     @PostMapping("/generate")
-    public String generateBlikCode(@RequestBody String data) {
-        var userId = data.split("&")[0].substring(7);
-        var token = data.split("&")[1].substring(6);
-        return blikRepository.makeBlik(Integer.parseInt(userId), token);
+    public String generateBlikCode(@RequestBody TokenData tokenData) {
+        return blikRepository.makeBlik(tokenData.getToken());
     }
 
+    @PostMapping("/use")
+    public int useBlikCode(@RequestBody BlikUsageData blikUsageData) {
+
+        return blikRepository.useBlik(blikUsageData.getAmount(), blikUsageData.getCode(), blikUsageData.getToken());
+    }
 }
