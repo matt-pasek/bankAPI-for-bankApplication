@@ -17,7 +17,7 @@ public class BlikRepository {
     JdbcTemplate jdbcTemplate;
 
     public String makeBlik(String token) {
-        var session = getSessionToken(token);
+        var session = getSessionByToken(token);
         if (session == null)
             return "error";
 
@@ -43,7 +43,7 @@ public class BlikRepository {
     }
 
     public int useBlik(int amount, String code, String token) {
-        var session = getSessionToken(token);
+        var session = getSessionByToken(token);
         if (session == null)
             return 0;
 
@@ -51,7 +51,7 @@ public class BlikRepository {
         if (blik == null || blik.getTargetId() != null)
             return 0;
 
-        if(getUser(blik.getUserId()).getBalance() < amount)
+        if(getUser(blik.getUserId()).getBalance() < amount || amount < 0)
             return 0;
 
         return jdbcTemplate.update("update blikcodes SET targetId=?, amount=? WHERE blik=?", session.getUser_id(), amount, code);
@@ -65,11 +65,25 @@ public class BlikRepository {
         }
     }
 
-    private Session getSessionToken(String token) {
+    private Session getSessionByToken(String token) {
         return jdbcTemplate.queryForObject("select * from sessions where token = ?", BeanPropertyRowMapper.newInstance(Session.class), token);
     }
 
     private User getUser(int userId) {
         return jdbcTemplate.queryForObject("select * from users where id = ?", BeanPropertyRowMapper.newInstance(User.class), userId);
+    }
+
+    public int confirmBlik(String code, String token) {
+        var session = getSessionByToken(token);
+        if(session == null) return 0;
+
+        var blik= getBlik(code);
+        if(blik == null || blik.getUserId() != session.getUser_id() || blik.getTargetId() == -1) return 0;
+
+        var res = 0;
+        res += jdbcTemplate.update("update users SET balance = balance + ? WHERE id = ?", blik.getAmount(), blik.getTargetId());
+        res += jdbcTemplate.update("update users SET balance = balance - ? WHERE id = ?", blik.getAmount(), blik.getUserId());
+        res += jdbcTemplate.update("delete from blikcodes where blik = ?", code);
+        return res == 3 ? 1 : 0;
     }
 }
