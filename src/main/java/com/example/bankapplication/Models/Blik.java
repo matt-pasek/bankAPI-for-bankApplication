@@ -12,5 +12,5 @@ public class Blik {
     private String blik;
     private int userId;
     private Integer targetId;
-    private int amount;
+    private Integer amount;
 }
