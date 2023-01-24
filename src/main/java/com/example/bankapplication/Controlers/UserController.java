@@ -1,5 +1,6 @@
 package com.example.bankapplication.Controlers;
 
+import com.example.bankapplication.Models.LoginCredentials;
 import com.example.bankapplication.Models.User;
 import com.example.bankapplication.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,8 @@ public class UserController {
     UserRepository userRepository;
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody String credentials) {
-        var username = credentials.split("&")[0].substring(9);
-        var password = credentials.split("&")[1].substring(9);
-        return userRepository.login(username, password);
+    public String loginUser(@RequestBody LoginCredentials loginCredentials) {
+        return userRepository.login(loginCredentials.getUsername(), loginCredentials.getPassword());
     }
 
     @PostMapping("/add")
