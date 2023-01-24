@@ -33,17 +33,10 @@ public class UserRepository {
             return -1;
         }
         var newBalance = user.getBalance() + amount;
-        jdbcTemplate.update("Update users set balance=? where id=?",
+        return jdbcTemplate.update("Update users set balance=? where id=?",
                 newBalance,
                 user.getId()
         );
-        if (amount < 0) {
-            return jdbcTemplate.update("insert into history(user_id, total) values (?,?)",
-                    user.getId(),
-                    -amount
-            );
-        }
-        return 0;
     }
 
     public String login(String username, String password) {
