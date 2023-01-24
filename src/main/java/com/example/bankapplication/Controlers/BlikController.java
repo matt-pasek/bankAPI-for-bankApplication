@@ -1,5 +1,6 @@
 package com.example.bankapplication.Controlers;
 
+import com.example.bankapplication.Models.BlikConfirmData;
 import com.example.bankapplication.Models.BlikUsageData;
 import com.example.bankapplication.Models.TokenData;
 import com.example.bankapplication.Repositories.BlikRepository;
@@ -21,5 +22,11 @@ public class BlikController {
     public int useBlikCode(@RequestBody BlikUsageData blikUsageData) {
 
         return blikRepository.useBlik(blikUsageData.getAmount(), blikUsageData.getCode(), blikUsageData.getToken());
+    }
+
+    @PostMapping("/confirm")
+    public int confirmBlikCode(@RequestBody BlikConfirmData blikConfirmData) {
+
+        return blikRepository.confirmBlik(blikConfirmData.getCode(), blikConfirmData.getToken());
     }
 }
