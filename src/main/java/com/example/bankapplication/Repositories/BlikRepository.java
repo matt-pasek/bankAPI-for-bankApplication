@@ -3,18 +3,18 @@ package com.example.bankapplication.Repositories;
 import com.example.bankapplication.Models.Blik;
 import com.example.bankapplication.Models.Session;
 import com.example.bankapplication.Models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Objects;
-
 @Repository
 public class BlikRepository {
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+     private final JdbcTemplate jdbcTemplate;
+
+    public BlikRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public String makeBlik(String token) {
         var session = getSessionByToken(token);
