@@ -1,7 +1,7 @@
 package com.example.bankapplication.Repositories;
 
+import com.example.bankapplication.Models.Session;
 import com.example.bankapplication.Models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,8 +13,11 @@ import java.util.Random;
 
 @Repository
 public class UserRepository {
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     private final Random random = new Random();
     public int addUser(User user) {
@@ -37,6 +40,20 @@ public class UserRepository {
                 newBalance,
                 user.getId()
         );
+    }
+
+    public int getBalance(String username, String token) {
+        var session = getSessionByToken(token);
+        if (session == null)
+            return -1;
+
+        var user = jdbcTemplate.queryForObject("SELECT * FROM users WHERE username=?", BeanPropertyRowMapper.newInstance(User.class), username);
+        if(user == null) return -1;
+        return user.getBalance();
+    }
+
+    private Session getSessionByToken(String token) {
+        return jdbcTemplate.queryForObject("select * from sessions where token = ?", BeanPropertyRowMapper.newInstance(Session.class), token);
     }
 
     public String login(String username, String password) {
