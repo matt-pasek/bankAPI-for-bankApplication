@@ -34,6 +34,12 @@ public class BlikRepository {
         return blikcode;
     }
 
+    public int canConfirmBlik(String code) {
+        var bliks = jdbcTemplate.query("select * from blikcodes where blik = ?", BeanPropertyRowMapper.newInstance(Blik.class), code);
+        if(bliks.size() > 0 && bliks.get(0).getTargetId() != null) return 1;
+        return 0;
+    }
+
     private String generateBlik() {
         StringBuilder blik = new StringBuilder();
         for (int i = 0; i < 6; i++) {
