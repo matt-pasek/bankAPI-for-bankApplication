@@ -4,10 +4,7 @@ import com.example.bankapplication.Models.BlikConfirmData;
 import com.example.bankapplication.Models.BlikUsageData;
 import com.example.bankapplication.Models.Token;
 import com.example.bankapplication.Repositories.BlikRepository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/blik")
@@ -27,6 +24,11 @@ public class BlikController {
     public int useBlikCode(@RequestBody BlikUsageData blikUsageData) {
 
         return blikRepository.useBlik(blikUsageData.getAmount(), blikUsageData.getCode(), blikUsageData.getToken());
+    }
+
+    @GetMapping("/confirm")
+    public int canConfirmBlikCode(@RequestParam("blik") String blik) {
+        return blikRepository.canConfirmBlik(blik);
     }
 
     @PostMapping("/confirm")
